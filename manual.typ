@@ -963,3 +963,29 @@ The palette library provides some predefined palettes.
 - `tango-light` #show-palette(palette.tango-light)
 - `tango` #show-palette(palette.tango)
 - `tango-dark` #show-palette(palette.tango-dark)
+
+= Internals
+Each CeTZ call (`line(..)`, `content(..)`, ...) returns a dictionary, a so
+called `draw-command`, which defines how the element gets interpreted. Because of
+Typst's feature to automatically concatenate returned arrays, a call to `canvas(..)`
+actually takes an array of dictionaries as its `body` parameter.
+
+A draw command dictionary can have the following keys:
+/ `name <string>`: The name of the element. This is used for storing anchors.
+/ `style <dictionary>`: A style dictionary which gets applied to the context.
+/ `coordinates <array of coordinates> or <function>`: List of coordinates which get translated to absolute coordinates and passed down to various callbacks.
+/ `render <function>`: Function of the form `(ctx, coordinates..) -> <array of render-commands>` which gets called to render the element. See `cmd.typ` for
+  the render commands available.
+/ `push-transform <function> or <matrix>`: Transformation matrix or function of the form `(ctx) -> <matrix>` returning a transformation matrix. The returned
+  transformation gets "pushed" (multiplied) to the current transformation matrix.
+/ `anchor <string> or <none>`: Name of the anchor used as origin.
+/ `default-anchor <string>`: Name of the anchor used as last position.
+/ `add-default-anchors <bool>`: Toggle if default anchors (`top`, `left`, ...) should be generated.
+/ `custom-anchors <function>`: Function of the form `(coordianates..) -> <dictionary>`, returning a dictionary of anchor names and their position.
+/ `custom-anchors-ctx <function>`: Same as `custom-anchors` but the context gets passed as first argument.
+/ `custom-anchors-drawables <function>`: Function of the form `(drawables) -> <dictionary>`
+/ `children <array of child-commands> or <function>`: Array of children or function of the form `(ctx) -> <array of draw-commands>`
+/ `finalize-children <function>`: Function of the form `(ctx, child-render-commands) -> <array of render-commands>` allowing for post child render render command modification.
+/ `before <function>`: Function of the form `(ctx) -> <context>` Function for pre-render context modification
+/ `after <function>`: Function of the form `(ctx, coordinates..) -> <context>` Function for post-render context modification.
+/ `transform-coordinates <function>`: Function of the form `(vectors..) -> <array of vectors>` To allow for pre-render absolute coordinate transformation.
