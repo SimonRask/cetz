@@ -125,14 +125,14 @@
         let f = vector.add(vector.scale(
           (calc.cos(s + 90deg), calc.sin(s + 90deg), 0), style.mark.size),
           start)
-        cmd.mark(f, start, style.mark.start,
+        cmd.mark(f, start, style.mark.start, style.mark,
           fill: style.mark.fill, stroke: style.mark.stroke)
       }
       if style.mark.end != none {
         let f = vector.add(vector.scale(
           (calc.cos(e - 90deg), calc.sin(e - 90deg), 0), style.mark.size),
           end)
-        cmd.mark(f, end, style.mark.end,
+        cmd.mark(f, end, style.mark.end, style.mark,
           fill: style.mark.fill, stroke: style.mark.stroke)
       }
 

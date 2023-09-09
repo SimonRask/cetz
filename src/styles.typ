@@ -44,8 +44,9 @@
   radius: 1,
   mark: (
     size: .15,
-    start: none,
-    end: none,
+    angle: 45deg, // Angle used for triangle style marks (< and >)
+    start: none,  // Start mark (string)
+    end: none,    // End mark (string)
     fill: auto,
     stroke: auto
   ),

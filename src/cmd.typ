@@ -143,10 +143,8 @@
   path(..segments, fill: fill, stroke: stroke, close: mode != "OPEN")
 }
 
-#let mark(from, to, symbol, fill: none, stroke: none) = {
+#let mark(from, to, symbol, style, fill: none, stroke: none) = {
   assert(symbol in (">", "<", "|", "<>", "o"), message: "Unknown arrow head: " + symbol)
-  let dir = vector.sub(to, from)
-  let odir = (-dir.at(1), dir.at(0), dir.at(2))
 
   if symbol == "<" {
     let tmp = to
@@ -154,29 +152,39 @@
     from = tmp
   }
 
+  let dir = vector.sub(to, from)
+  let odir = (-dir.at(1), dir.at(0), dir.at(2))
+
   let style = (
     fill: fill,
     stroke: stroke
   )
 
   let triangle(reverse: false) = {
-      let outset = if reverse { 1 } else { 0 }
-      let from = vector.add(from, vector.scale(dir, outset))
-      let to = vector.add(to, vector.scale(dir, outset))
-      let n = vector.scale(odir, .4)
+      let dir = vector.scale(dir, -1)
+      let (from, to) = if reverse {(to, from)} else {(from,to)}
+
+      let angle = style.at("angle", default: 50deg) / 2
+      let a = (calc.cos(-angle) * dir.at(0) - calc.sin(-angle) * dir.at(1),
+               calc.sin(-angle) * dir.at(0) + calc.cos(-angle) * dir.at(1),
+               to.at(2))
+      let b = (calc.cos(+angle) * dir.at(0) - calc.sin(+angle) * dir.at(1),
+               calc.sin(+angle) * dir.at(0) + calc.cos(+angle) * dir.at(1),
+               to.at(2))
+
+      a = vector.add(to, a)
+      b = vector.add(to, b)
 
       if fill != none {
         // Draw a filled triangle
-        path(("line", from, (vector.add(from, n)),
-                        to, (vector.add(from, vector.neg(n)))),
+        path(("line", a, to, b),
               close: true,
               ..style)
       } else {
         // Draw open arrow
-        path(("line", (vector.add(from, n)), to,
-                      (vector.add(from, vector.neg(n)))),
+        path(("line", a, to, b),
               close: false,
-              ..style)
+              ..style, fill: none)
       }
   }
 
