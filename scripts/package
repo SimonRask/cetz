@@ -43,7 +43,8 @@ function read-toml() {
   awk -F= "/^${key}/ { sub(/^\\s*\"/, \"\", \$2); sub(/\"\\s*$/, \"\", \$2); print(\$2); }" "$file"
 }
 
-SOURCE="$(realpath "$(dirname "${BASH_SOURCE[0]}")/..")"
+
+SOURCE="$(cd "$(dirname "$0")"; pwd -P)/.."
 TARGET="${1:?Missing target path or @local}"
 VERSION="$(read-toml "$SOURCE/typst.toml" "version")"
 
